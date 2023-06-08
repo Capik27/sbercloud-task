@@ -1,9 +1,9 @@
 import { Container } from "components/Container/Container";
 
-export function Create() {
+export function Error() {
 	return (
 		<Container>
-			<div>Create</div>
+			<div>Error</div>
 		</Container>
 	);
 }

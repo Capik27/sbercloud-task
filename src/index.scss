@@ -1,0 +1,15 @@
+@import "utils/styleVars.scss";
+@import "fonts/SBfont.scss";
+
+#root {
+  height: 100vh;
+  padding: 24px 24px 0px;
+  background-color: $COLOR_PAGE_BG;
+}
+
+body {
+  margin: 0;
+  font-family: "SB Sans Interface", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

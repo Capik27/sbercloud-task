@@ -1,0 +1,22 @@
+@import "utils/styleVars.scss";
+
+%def {
+    margin: auto;
+    box-sizing: border-box;
+    border-radius: $FORM_BRADIUS;
+    max-width: $FORM_MAX_WIDTH;
+    min-width: $FORM_MIN_WIDTH;
+    background-color: $COLOR_FORM_BG;
+}
+
+.create {
+    @extend %def;
+    padding: 60px 110px 80px 110px;
+}
+
+.main {
+    @extend %def;
+    padding: 24px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
