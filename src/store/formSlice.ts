@@ -1,38 +1,78 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-	isregpage: false,
-	isinside: false,
+export type advType = {
+	value?: string;
+	checked?: boolean;
+	radio?: boolean;
+};
+
+// interface IData {
+// 	adv: advType[];
+// }
+
+type sliceType = {
+	step: number;
+	data: any;
+};
+
+const initialState: sliceType = {
+	step: 0,
+	data: {
+		user: {
+			nickname: "",
+			name: "",
+			sername: "",
+			sex: "",
+			email: "",
+			phone: "",
+			about: "",
+		},
+		adv: [
+			{ value: "1", checked: false, radio: false },
+			{ value: "2", checked: false, radio: false },
+			{ value: "3", checked: false, radio: false },
+		],
+	},
 };
 
 const formSlice = createSlice({
 	name: "form",
 	initialState,
 	reducers: {
-		setRegPageTrueAction(state) {
-			state.isregpage = true;
+		resetStore() {
+			return initialState;
 		},
-		setRegPageFalseAction(state) {
-			state.isregpage = false;
+		setStep(state, action) {
+			state.step = action.payload;
 		},
-		setRegPageToggleAction(state) {
-			state.isregpage = !state.isregpage;
+		setUserField(state, action) {
+			const { key, value } = action.payload;
+			console.log("user change", key, value);
+			state.data.user[key] = value;
 		},
-		//////
-		setInsideTrueAction(state) {
-			state.isinside = true;
+		setAdvField(state, action) {
+			const { index, key, value } = action.payload;
+			// if (key === "radio") console.log("radio change state", action.payload);
+			state.data.adv[index][key] = value;
 		},
-		setInsideFalseAction(state) {
-			state.isinside = false;
+		addInput(state) {
+			state.data.adv.push({ value: "", checked: false, radio: false });
+		},
+		deleteInput(state, action) {
+			// console.log("delete index", action.payload);
+			state.data.adv = state.data.adv.filter(
+				(_: any, index: number) => index != action.payload
+			);
 		},
 	},
 });
 
 export default formSlice.reducer;
 export const {
-	setRegPageTrueAction,
-	setRegPageFalseAction,
-	setRegPageToggleAction,
-	setInsideTrueAction,
-	setInsideFalseAction,
+	setStep,
+	addInput,
+	deleteInput,
+	setAdvField,
+	setUserField,
+	resetStore,
 } = formSlice.actions;

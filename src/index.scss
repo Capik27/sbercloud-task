@@ -1,15 +1,118 @@
 @import "utils/styleVars.scss";
 @import "fonts/SBfont.scss";
-
+@import "~bootstrap/scss/bootstrap";
 #root {
-  height: 100vh;
-  padding: 24px 24px 0px;
+  flex-grow: 1;
+  padding: 24px;
   background-color: $COLOR_PAGE_BG;
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   margin: 0;
   font-family: "SB Sans Interface", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+%btn {
+  border-radius: 4px;
+  height: 44px;
+  font-family: "SB Sans Interface", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  border-color: $COLOR_BTN;
+}
+
+.button {
+  @extend %btn;
+  background-color: $COLOR_BTN;
+
+  &:hover {
+    background-color: $COLOR_BTN_HOVER;
+  }
+
+  &-outlined {
+    @extend %btn;
+    color: $COLOR_BTN;
+    &:hover {
+      background-color: $COLOR_BTN;
+    }
+    &:focus {
+      color: white;
+    }
+  }
+
+  &-remove {
+    color: none;
+    background-color: none;
+    height: 38px;
+    padding: 0px 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:before {
+      content: url("./assets/bin_icon.png");
+      transform: translateY(15%);
+    }
+  }
+}
+
+.plus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:before {
+    content: url("./assets/plus_icon.png");
+    transition: all 0.3s;
+  }
+
+  &:hover:before {
+    filter: grayscale(1) brightness(1000%);
+  }
+
+  &:focus:before {
+    filter: grayscale(1) brightness(1000%);
+  }
+}
+
+.tip {
+  display: block;
+  height: 20px;
+  font-size: 12px;
+  line-height: 20px;
+  color: $COLOR_ERROR;
+}
+
+.scounter {
+  position: absolute;
+  color: $COLOR_STEPS_ITEM_EMPTY;
+  font-size: 12px;
+  right: 6px;
+  bottom: 0px;
+}
+
+.form {
+  max-width: 300px;
+
+  &-2 {
+    max-width: 330px;
+  }
+
+  &__label {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    color: $FORM_COLOR_LABEL;
+  }
+
+  &__field {
+    border-radius: 4px;
+    color: $FORM_COLOR_LABEL;
+    border: 1px solid #00000029;
+  }
 }

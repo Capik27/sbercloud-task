@@ -1,0 +1,88 @@
+@import "utils/styleVars.scss";
+
+.main {
+    z-index: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+%line {
+    height: 8px;
+    border-radius: 4px;
+    display: inline-block;
+    position: absolute;
+    left: 1%;
+}
+
+%text {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+}
+
+.text {
+    @extend %text;
+    color: $COLOR_STEPS_TEXT;
+
+    &_done {
+        @extend %text;
+        color: $COLOR_STEPS_ITEM_DONE;
+    }
+}
+
+.line {
+    @extend %line;
+    width: 98%;
+    z-index: 1;
+    background-color: $COLOR_PAGE_BG;
+}
+.progress {
+    @extend %line;
+    z-index: 2;
+    background-color: $COLOR_STEPS_ITEM_DONE;
+}
+
+%item {
+    z-index: 3;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+.item {
+    &_process {
+        @extend %item;
+        border: 7.5px solid $COLOR_STEPS_ITEM_DONE;
+        background-color: $COLOR_FORM_BG;
+    }
+
+    &_done {
+        @extend %item;
+        border: 1px solid $COLOR_STEPS_ITEM_DONE;
+        background-color: $COLOR_STEPS_ITEM_DONE;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        &:before {
+            content: url("../../assets/checked_icon.png");
+            position: absolute;
+        }
+    }
+
+    &_empty {
+        @extend %item;
+        border: 1px solid $COLOR_STEPS_ITEM_EMPTY;
+        background-color: $COLOR_STEPS_ITEM_EMPTY;
+    }
+}

@@ -1,6 +1,5 @@
-const siteName = "sbercloud-task";
-const MAIN_ROUTE = siteName + "/";
-const CREATE_ROUTE = siteName + "/create";
-const ERROR_ROUTE = siteName + "/error";
+const MAIN_ROUTE = "/";
+const CREATE_ROUTE = "/create";
+const ERROR_ROUTE = "error";
 
 export { MAIN_ROUTE, CREATE_ROUTE, ERROR_ROUTE };

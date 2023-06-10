@@ -1,0 +1,104 @@
+@import "utils/styleVars.scss";
+
+%flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.background {
+    background-color: $COLOR_MODAL_BG;
+    @extend %flex;
+    position: absolute;
+    padding: 24px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    animation: show 0.5s forwards;
+}
+
+.popup {
+    @extend %flex;
+    gap: 50px;
+    padding: $POPUP_PADDING;
+    box-shadow: $POPUP_SHADOW;
+    box-sizing: border-box;
+    border-radius: $FORM_BRADIUS;
+    width: 100%;
+    // height: 100%;
+    max-width: $POPUP_MAX_WIDTH;
+    min-width: $POPUP_MIN_WIDTH;
+    background-color: $COLOR_FORM_BG;
+    animation: show 1.5s forwards;
+}
+
+.title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 26px;
+    text-align: center;
+    color: $FORM_COLOR_LABEL;
+}
+
+%circle {
+    @extend %flex;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.circle {
+    &_success {
+        @extend %circle;
+        background-color: $COLOR_SUCCESS_LIGTH;
+
+        &:before {
+            width: 50%;
+            height: 50%;
+            content: url("../../assets/success_icon.png");
+        }
+    }
+
+    &_error {
+        @extend %circle;
+        background-color: $COLOR_ERROR_LIGTH;
+
+        &:before {
+            width: 50%;
+            height: 50%;
+            content: url("../../assets/error_icon.png");
+        }
+    }
+
+    &_button {
+        @extend %circle;
+        background-color: $POPUP_CLOSEBTN_COLOR;
+        width: 28px;
+        height: 28px;
+        padding: 2px;
+        border: none;
+        border-radius: 50%;
+        transition: all 0.3s;
+
+        &:before {
+            content: url("../../assets/cross_icon.png");
+            transform: translateY(1px);
+        }
+
+        &:hover {
+            background-color: $POPUP_CLOSEBTN_HOVER_COLOR;
+        }
+    }
+}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

@@ -1,19 +1,41 @@
+import { Outlet, createBrowserRouter } from "react-router-dom";
 import { Main } from "../pages/main/Main";
-import { Create } from "../pages/Create";
-import { Error } from "../pages/Error";
-import { MAIN_ROUTE, CREATE_ROUTE, ERROR_ROUTE } from "./paths";
+import { Create } from "../pages/create/Create";
+import { Step1 } from "../pages/create/Step1";
+import { Step2 } from "../pages/create/Step2";
+import { Step3 } from "../pages/create/Step3";
 
-export const routes = [
+export const router = createBrowserRouter([
 	{
-		path: MAIN_ROUTE,
-		Component: <Main />,
+		path: "/",
+		element: (
+			<div>
+				<Outlet />
+			</div>
+		),
+		children: [
+			{
+				path: "main",
+				element: <Main />,
+			},
+			{
+				path: "create",
+				element: <Create />,
+				children: [
+					{
+						path: "1",
+						element: <Step1 />,
+					},
+					{
+						path: "2",
+						element: <Step2 />,
+					},
+					{
+						path: "3",
+						element: <Step3 />,
+					},
+				],
+			},
+		],
 	},
-	{
-		path: CREATE_ROUTE,
-		Component: <Create />,
-	},
-	{
-		path: ERROR_ROUTE,
-		Component: <Error />,
-	},
-];
+]);

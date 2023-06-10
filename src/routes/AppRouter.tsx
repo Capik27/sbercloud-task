@@ -1,13 +1,15 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { routes } from "./routes";
-import { ERROR_ROUTE } from "./paths";
+import { Main } from "../pages/main/Main";
+import { Create } from "../pages/create/Create";
+import { Error } from "../pages/Error";
+import { MAIN_ROUTE, CREATE_ROUTE, ERROR_ROUTE } from "./paths";
 
 export function AppRouter() {
 	return (
 		<Routes>
-			{routes.map(({ path, Component }) => (
-				<Route key={path} path={path} element={Component} />
-			))}
+			<Route path={MAIN_ROUTE} element={<Main />} />
+			<Route path={CREATE_ROUTE} element={<Create />} />
+			<Route path={ERROR_ROUTE} element={<Error />} />
 			<Route
 				path={"*"}
 				element={<Navigate to={ERROR_ROUTE} replace={true} />}

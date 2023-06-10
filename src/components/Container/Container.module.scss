@@ -11,12 +11,14 @@
 
 .create {
     @extend %def;
-    padding: 60px 110px 80px 110px;
+    padding: 60px calc((110px / $FORM_MAX_WIDTH) * 100%) 80px calc((110px / $FORM_MAX_WIDTH) * 100%);
 }
 
 .main {
     @extend %def;
     padding: 24px;
+
+    height: 700px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
