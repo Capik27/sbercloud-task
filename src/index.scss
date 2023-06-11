@@ -41,9 +41,6 @@ body {
     &:hover {
       background-color: $COLOR_BTN;
     }
-    &:focus {
-      color: white;
-    }
   }
 
   &-remove {
@@ -67,16 +64,9 @@ body {
   justify-content: center;
   align-items: center;
   &:before {
-    content: url("./assets/plus_icon.png");
+    content: "✖";
+    transform: rotate(45deg);
     transition: all 0.3s;
-  }
-
-  &:hover:before {
-    filter: grayscale(1) brightness(1000%);
-  }
-
-  &:focus:before {
-    filter: grayscale(1) brightness(1000%);
   }
 }
 

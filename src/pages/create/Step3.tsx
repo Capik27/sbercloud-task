@@ -51,6 +51,7 @@ export function Step3() {
 
 	const fetchForm = async () => {
 		const body = JSON.parse(JSON.stringify(infodata));
+		console.log("BODY", body);
 		body.user.about = getValues().about;
 		const resp = await fetch(ENDPOINT, {
 			method: "POST",
@@ -84,7 +85,8 @@ export function Step3() {
 	};
 
 	const onSubmit = (data: any) => {
-		handleChange("about", data.about);
+		// console.log("data.about", data.about);
+		// handleChange("about", data.about);
 		if (isValid) {
 			fetchForm();
 		}

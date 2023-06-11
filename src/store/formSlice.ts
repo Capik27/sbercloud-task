@@ -6,10 +6,6 @@ export type advType = {
 	radio?: boolean;
 };
 
-// interface IData {
-// 	adv: advType[];
-// }
-
 type sliceType = {
 	step: number;
 	data: any;
@@ -61,7 +57,7 @@ const formSlice = createSlice({
 		deleteInput(state, action) {
 			// console.log("delete index", action.payload);
 			state.data.adv = state.data.adv.filter(
-				(_: any, index: number) => index != action.payload
+				(_: any, index: number) => index !== action.payload
 			);
 		},
 	},

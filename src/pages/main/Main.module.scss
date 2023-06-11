@@ -34,9 +34,15 @@
 
     &__contacts {
         display: flex;
+
         gap: 16px;
         @media (max-width: 460px) {
-            gap: 2px;
+            gap: 0px;
+        }
+
+        @media (max-width: 320px) {
+            gap: 4px;
+            flex-direction: column;
         }
     }
 

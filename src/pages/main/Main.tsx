@@ -8,6 +8,9 @@ import { CREATE_ROUTE } from "routes/paths";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { yupResolver } from "@hookform/resolvers/yup";
+import mainShema from "utils/yup/mainShema";
+import { telChange, telPaste } from "utils/validation/phone";
 
 export function Main() {
 	const navigate = useNavigate();
@@ -20,6 +23,7 @@ export function Main() {
 		formState: { errors, isValid },
 	} = useForm({
 		mode: "onBlur",
+		resolver: yupResolver(mainShema),
 		defaultValues: {
 			phone: user.phone ?? "",
 			email: user.email ?? "",
@@ -68,20 +72,20 @@ export function Main() {
 				</div>
 			</div>
 			<hr className={style.hr} />
-			<Form className={style.form} onSubmit={handleSubmit(onSubmit)}>
+			<Form
+				className={style.form}
+				onSubmit={handleSubmit(onSubmit)}
+				autoComplete="off"
+			>
 				<Form.Group className="mb-3">
 					<Form.Label className={style.form__label}>Номер телефона</Form.Label>
+
 					<Form.Control
-						{...register("phone", {
-							required: "Введите ваш номер телефона",
-							pattern: {
-								value: /^((\+7)+([0-9]){10})$/,
-								message: "Неверный формат номера!",
-							},
-						})}
-						autoComplete="off"
+						{...register("phone")}
+						onPaste={telPaste}
+						onChange={telChange}
 						type="tel"
-						placeholder="+7 900 000-00-00"
+						placeholder="+7 (900) 000-00-00"
 						className={style.form__field}
 					/>
 					<span className="tip">
@@ -92,16 +96,9 @@ export function Main() {
 				<Form.Group className="mb-5">
 					<Form.Label className={style.form__label}>Email</Form.Label>
 					<Form.Control
-						{...register("email", {
-							required: "Введите вашу электоронную почту",
-							pattern: {
-								value: /^[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+.[a-zA-Z]{2,}$/,
-								message: "Неверный формат почты!",
-							},
-						})}
-						autoComplete="off"
-						type="email"
-						placeholder="shikhovks@example.com"
+						{...register("email")}
+						type="text"
+						placeholder="starlord@gotg.com"
 						className={style.form__field}
 					/>
 					<span className="tip">
