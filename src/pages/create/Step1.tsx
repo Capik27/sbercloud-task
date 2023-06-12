@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { SyntheticEvent } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import step1Shema from "utils/yup/step1Shema";
 
 export function Step1() {
 	const navigate = useNavigate();
@@ -21,6 +23,7 @@ export function Step1() {
 		formState: { errors, isValid },
 	} = useForm({
 		mode: "onBlur",
+		resolver: yupResolver(step1Shema),
 		defaultValues: {
 			nickname: user.nickname ?? "",
 			name: user.name ?? "",

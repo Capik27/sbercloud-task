@@ -1,122 +1,264 @@
 import { SyntheticEvent } from "react";
+const TEL_PURE_LENGTH_LIMIT = 11;
+// STATE
+let LIMIT: boolean = false; // тру если длина достигла лимита
+let STATE_VALUE: string = ""; // сохранение строкипри достижении лимита
+let CLIPBOARD_VALUE: string = ""; // сохранение зачения из буфера
+
+/////////////////////////////////////////////////////////////////////////
+// telChange Callback
+/////////////////////////////////////////////////////////////////////////
 
 /**
  * Функция проверки и создания телефонной маски
  */
-export const telChange = (e: SyntheticEvent) => {
+export const telChange = (e: SyntheticEvent | any) => {
 	const target = e.target as HTMLInputElement;
-	const valueNumbers = target.value.replace(/\D/g, "");
-	let formattedValue = "";
+	let valueNumbers = target.value.replace(/\D/g, "");
+
+	console.log("telChange", target.value);
 
 	//при отсутсвии цифр очищаем поле
 	if (!valueNumbers) return (target.value = "");
 
-	//находим позицию курсора в строке поля инпута
-	const cursorPosition = target.selectionStart;
+	//получаем вводный символ или вставочную строку
+	const ne = e.nativeEvent as InputEvent;
+	const data = ne.data ?? CLIPBOARD_VALUE;
 
-	//редактирование номера
-	if (target.value.length !== cursorPosition) {
-		if (valueNumbers.length > 11) {
-			return (target.value = valueNumbers.substring(0, 11));
-		}
-		let ne = e.nativeEvent as InputEvent;
-		if (ne.data && /\D/g.test(ne.data)) {
-			target.value = valueNumbers;
-			formatValueSetter();
-		}
+	//находим позицию курсора в строке поля инпута
+	const cursorPosition = target.selectionStart as number;
+	const cursorEndPosition = (target.selectionEnd as number) + data.length;
+	const selectionLength = cursorEndPosition - cursorPosition;
+
+	// console.log("cursorPosition", cursorPosition);
+	// console.log("cursorENDPosition", cursorEndPosition);
+
+	//при неприемлимых символах и наличии выделения возвращаемся к стейту
+	const isErrorSymbol: boolean = /\D/g.test(data);
+	// console.log(isErrorSymbol, "data", !!data, data);
+	if (data && isErrorSymbol && selectionLength) {
+		target.value = STATE_VALUE;
+		convertValueToMask(target, target.value);
+		setCursorPosition(target, cursorPosition - 1);
 		return;
 	}
 
-	formatValueSetter();
+	//при достижении лимита сохраняем значения во внешние переменные
+	checkState(valueNumbers);
+	// console.log("LIMIT CHANGE", LIMIT, STATE_VALUE);
 
-	//Создание маски
-	function formatValueSetter() {
-		if (["7", "8", "9"].indexOf(valueNumbers[0]) > -1) {
-			//добавляем код страны
-			formattedValue = formattedValue + "7";
+	//если происходит редактирование номера = курсор не в конце
+	if (target.value.length !== cursorPosition) {
+		// console.log("INSERT", target.value.length, cursorPosition);
 
-			//добавляем код города
-			if (valueNumbers.length > 1) {
-				const cityCode = valueNumbers.substring(1, 4);
-				formattedValue = formattedValue + " (" + cityCode;
-			}
-			//добавляем первый блок номера
-			if (valueNumbers.length >= 5) {
-				const block1 = valueNumbers.substring(4, 7);
-				formattedValue = formattedValue + ") " + block1;
-			}
-			//добавляем второй блок номера
-			if (valueNumbers.length >= 8) {
-				const block2 = valueNumbers.substring(7, 9);
-				formattedValue = formattedValue + "-" + block2;
-			}
-			//добавляем последний блок номера
-			if (valueNumbers.length >= 10) {
-				const block3 = valueNumbers.substring(9, 11);
-				formattedValue = formattedValue + "-" + block3;
-			}
+		// // const dataText = data.getData("Text");
+		// console.log("data", data, valueNumbers.length >= TEL_PURE_LENGTH_LIMIT);
+		// console.log(valueNumbers.length, TEL_PURE_LENGTH_LIMIT);
+		// добавление символа и лимит достигнут или превышен
+		if (data && valueNumbers.length >= TEL_PURE_LENGTH_LIMIT) {
+			target.value = STATE_VALUE;
+			convertValueToMask(target, target.value);
 		} else {
-			//не для РФ
-			formattedValue = valueNumbers;
+			// добавление или удаление символа при не достигнутом лимите маски
+			if (/\D/g.test(data)) {
+				target.value = STATE_VALUE;
+				// console.log("символы есть");
+				convertValueToMask(target, target.value);
+			} else {
+				convertValueToMask(target, valueNumbers);
+			}
+			setCursorPosition(target, cursorPosition);
 		}
-		target.value = "+" + formattedValue;
+		// console.log("конец");
+		return;
 	}
+
+	convertValueToMask(target, valueNumbers);
 };
 
+/////////////////////////////////////////////////////////////////////////
+// telPaste Callback
+/////////////////////////////////////////////////////////////////////////
+
 /**
- * Функция проверки вставок в телефонную маску
+ * Функция вставок из буфера в строку инпута
  */
 export const telPaste = (e: any) => {
 	const target = e.target as HTMLInputElement;
 	const valueNumbers = target.value.replace(/\D/g, "");
 
-	const cursorPosition = target.selectionStart ?? target.value.length;
+	//проверяем наличие выледения курсором (индексы чистые)
+	const { pureStartIndex, pureEndIndex, pureSelectionLength } =
+		getPureSelections(target);
+
+	//находим позиции курсора в строке поля инпута
+	const cursorStartPosition = target.selectionStart as number;
+	const cursorEndPosition = target.selectionEnd as number;
 
 	//находим объект с нашей вставочной строкой из буфера
-	const pasted = e.clipboardData || window.Clipboard;
-
-	//проверяем наличие выледения курсором
-	const selection = window.getSelection()?.toString();
-	console.log("selection", selection);
+	const pasted = e.clipboardData;
 
 	if (pasted) {
 		const pastedText = pasted.getData("Text");
-		// если есть НЕ ЦИФРА или количество цифр равно лимиту, то возврат к дефолту
-		if (/\D/g.test(pastedText) || valueNumbers.length === 11) {
+		CLIPBOARD_VALUE = pastedText;
+
+		// console.log("pastedText", pastedText);
+
+		//если вставляется пустое значение ""
+		if (!pastedText) {
+			// setCursorPosition(target, cursorStartPosition);
+			return;
+		}
+		//если есть НЕ ЦИФРА
+		if (/\D/g.test(pastedText)) {
+			// console.log("НЕ ЦИФРА");
 			target.value = valueNumbers;
+
+			// if (pureSelectionLength) {
+			// 	setCursorPosition(target, cursorStartPosition - pastedText.length);
+			// } else {
+			// 	setCursorPosition(target, cursorStartPosition - pastedText.length + 1);
+			// }
+
 			return;
 		}
-		// если количество цифр меньше лимита
-		if (valueNumbers.length < 11) {
-			//получаем цифры до курсора
-			const firstPartNumbers = target.value
-				.substring(0, cursorPosition)
-				.replace(/\D/g, "");
-			//получаем цифры после курсора
-			const secondPartNumbers = target.value
-				.substring(cursorPosition, target.value.length)
-				.replace(/\D/g, "");
 
-			//определяем количество фри симолов в маске
-			const pasteSymbolNumber = 11 - valueNumbers.length;
+		// console.log("cursorPosition", cursorStartPosition);
+		// console.log("cursorENDPosition", cursorEndPosition);
 
-			// если вставляемая строка меньше, чем запас фри символов в маске, то игнор
-			if (pasteSymbolNumber > pastedText.length) return;
+		// console.log("selectionLength", pureSelectionLength);
+		// console.log("selectionStart", pureStartIndex);
+		// console.log("selectionEnd", pureEndIndex);
 
-			// вырезаем из буфера количество допустимых символов и вставляем в резалт
-			const pasteSymbols = pastedText.substring(0, pasteSymbolNumber);
-			target.value = firstPartNumbers + pasteSymbols + secondPartNumbers;
-			return;
-		}
+		//определяем количество свободных символов в маске
+		const pasteFreeSymbolNumber = TEL_PURE_LENGTH_LIMIT - valueNumbers.length;
+
+		// console.log("pasteSymbolNumber", pasteFreeSymbolNumber);
+
+		//получаем сумму свободных и выделенных слотов в маске
+		const freeSlots = pasteFreeSymbolNumber + pureSelectionLength;
+
+		// console.log(
+		// 	"freeSlots",
+		// 	freeSlots,
+		// 	pasteFreeSymbolNumber,
+		// 	pureSelectionLength
+		// );
+
+		// если вставляемая строка меньше, чем запас фри символов в маске, то игнор
+		if (freeSlots > pastedText.length) return;
+
+		//получаем цифры до курсора или начала выделения
+		const firstPartNumbers = target.value
+			.substring(0, cursorStartPosition)
+			.replace(/\D/g, "");
+		//получаем цифры после курсора или конца выделения
+		const secondPartNumbers = target.value
+			.substring(
+				pureStartIndex === pureEndIndex
+					? cursorStartPosition
+					: cursorEndPosition,
+				target.value.length
+			)
+			.replace(/\D/g, "");
+
+		// вырезаем из буфера количество допустимых символов и вставляем в резалт
+		const pasteSymbols = pastedText.substring(0, freeSlots);
+
+		// console.log("firstPartNumbers", firstPartNumbers);
+		// console.log("pasteSymbols", pasteSymbols);
+		// console.log("secondPartNumbers", secondPartNumbers);
+
+		const result = firstPartNumbers + pasteSymbols + secondPartNumbers; //.substring(0, TEL_PURE_LENGTH_LIMIT);
+		// console.log("FINAL", result);
+		target.value = result;
+
+		//при достижении лимита сохраняем значения во внешние переменные
+		checkState(valueNumbers);
+		// console.log("LIMIT PASTE", LIMIT, STATE_VALUE);
+		// setCursorPosition(target, cursorStartPosition);
+		return;
 	}
 };
 
-// export const telSelect = (e: SyntheticEvent) => {
-// 	console.log(e.target);
-// 	//
-// };
+/**
+ * Функция создания маски
+ *  @element : target элемент инпута
+ *  @strNumbers : строка с числами
+ */
+function convertValueToMask(element: HTMLInputElement, strNumbers: string) {
+	let formattedValue = "";
+	if (["7", "8", "9"].indexOf(strNumbers[0]) > -1) {
+		//добавляем код страны
+		formattedValue = formattedValue + "7";
 
-// const inputElement = document.getElementById('my-input');
-// const selection = window.getSelection().toString();
-// const selectedIndex = inputElement.value.indexOf(selection);
-// const selectedNumbers = inputElement.value.slice(selectedIndex, selectedIndex + selection.length);
+		//добавляем код города
+		if (strNumbers.length > 1) {
+			const cityCode = strNumbers.substring(1, 4);
+			formattedValue = formattedValue + " (" + cityCode;
+		}
+		//добавляем первый блок номера
+		if (strNumbers.length >= 5) {
+			const block1 = strNumbers.substring(4, 7);
+			formattedValue = formattedValue + ") " + block1;
+		}
+		//добавляем второй блок номера
+		if (strNumbers.length >= 8) {
+			const block2 = strNumbers.substring(7, 9);
+			formattedValue = formattedValue + "-" + block2;
+		}
+		//добавляем последний блок номера
+		if (strNumbers.length >= 10) {
+			const block3 = strNumbers.substring(9, 11);
+			formattedValue = formattedValue + "-" + block3;
+		}
+	} else {
+		//не для РФ
+		formattedValue = strNumbers;
+	}
+	element.value = "+" + formattedValue;
+}
+
+/**
+ * Функция проверки стейта
+ */
+function checkState(strNumbers: string) {
+	if (strNumbers.length === TEL_PURE_LENGTH_LIMIT) {
+		LIMIT = true;
+		STATE_VALUE = strNumbers;
+	} else if (strNumbers.length < TEL_PURE_LENGTH_LIMIT) {
+		if (LIMIT) LIMIT = false;
+		STATE_VALUE = strNumbers;
+	}
+}
+
+/**
+ * Функция смещения курсора на элементе
+ */
+function setCursorPosition(element: HTMLInputElement, position: number = 0) {
+	element.selectionStart = position;
+	element.selectionEnd = position;
+}
+
+type pureSelResultsType = {
+	pureStartIndex: number;
+	pureEndIndex: number;
+	pureSelectionLength: number;
+};
+
+/**
+ * Функция получения чистых индексов при выделении
+ * @return { pureStartIndex, pureEndIndex, pureSelectionLength }
+ */
+function getPureSelections(element: HTMLInputElement): pureSelResultsType {
+	//проверяем наличие выледения курсором (индексы чистые)
+	const pureStartIndex = element.value
+		.substring(0, element.selectionStart as number)
+		.replace(/\D/g, "").length;
+	const pureEndIndex = element.value
+		.substring(0, element.selectionEnd as number)
+		.replace(/\D/g, "").length;
+	//определяем чистую длину выделения
+	const pureSelectionLength = pureEndIndex - pureStartIndex;
+	return { pureStartIndex, pureEndIndex, pureSelectionLength };
+}
