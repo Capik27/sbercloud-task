@@ -16,8 +16,6 @@ export const telChange = (e: SyntheticEvent | any) => {
 	const target = e.target as HTMLInputElement;
 	let valueNumbers = target.value.replace(/\D/g, "");
 
-	console.log("telChange", target.value);
-
 	//при отсутсвии цифр очищаем поле
 	if (!valueNumbers) return (target.value = "");
 
@@ -30,12 +28,8 @@ export const telChange = (e: SyntheticEvent | any) => {
 	const cursorEndPosition = (target.selectionEnd as number) + data.length;
 	const selectionLength = cursorEndPosition - cursorPosition;
 
-	// console.log("cursorPosition", cursorPosition);
-	// console.log("cursorENDPosition", cursorEndPosition);
-
 	//при неприемлимых символах и наличии выделения возвращаемся к стейту
 	const isErrorSymbol: boolean = /\D/g.test(data);
-	// console.log(isErrorSymbol, "data", !!data, data);
 	if (data && isErrorSymbol && selectionLength) {
 		target.value = STATE_VALUE;
 		convertValueToMask(target, target.value);
@@ -45,15 +39,9 @@ export const telChange = (e: SyntheticEvent | any) => {
 
 	//при достижении лимита сохраняем значения во внешние переменные
 	checkState(valueNumbers);
-	// console.log("LIMIT CHANGE", LIMIT, STATE_VALUE);
 
 	//если происходит редактирование номера = курсор не в конце
 	if (target.value.length !== cursorPosition) {
-		// console.log("INSERT", target.value.length, cursorPosition);
-
-		// // const dataText = data.getData("Text");
-		// console.log("data", data, valueNumbers.length >= TEL_PURE_LENGTH_LIMIT);
-		// console.log(valueNumbers.length, TEL_PURE_LENGTH_LIMIT);
 		// добавление символа и лимит достигнут или превышен
 		if (data && valueNumbers.length >= TEL_PURE_LENGTH_LIMIT) {
 			target.value = STATE_VALUE;
@@ -62,14 +50,12 @@ export const telChange = (e: SyntheticEvent | any) => {
 			// добавление или удаление символа при не достигнутом лимите маски
 			if (/\D/g.test(data)) {
 				target.value = STATE_VALUE;
-				// console.log("символы есть");
 				convertValueToMask(target, target.value);
 			} else {
 				convertValueToMask(target, valueNumbers);
 			}
 			setCursorPosition(target, cursorPosition);
 		}
-		// console.log("конец");
 		return;
 	}
 
@@ -102,8 +88,6 @@ export const telPaste = (e: any) => {
 		const pastedText = pasted.getData("Text");
 		CLIPBOARD_VALUE = pastedText;
 
-		// console.log("pastedText", pastedText);
-
 		//если вставляется пустое значение ""
 		if (!pastedText) {
 			// setCursorPosition(target, cursorStartPosition);
@@ -111,39 +95,15 @@ export const telPaste = (e: any) => {
 		}
 		//если есть НЕ ЦИФРА
 		if (/\D/g.test(pastedText)) {
-			// console.log("НЕ ЦИФРА");
 			target.value = valueNumbers;
-
-			// if (pureSelectionLength) {
-			// 	setCursorPosition(target, cursorStartPosition - pastedText.length);
-			// } else {
-			// 	setCursorPosition(target, cursorStartPosition - pastedText.length + 1);
-			// }
-
 			return;
 		}
-
-		// console.log("cursorPosition", cursorStartPosition);
-		// console.log("cursorENDPosition", cursorEndPosition);
-
-		// console.log("selectionLength", pureSelectionLength);
-		// console.log("selectionStart", pureStartIndex);
-		// console.log("selectionEnd", pureEndIndex);
 
 		//определяем количество свободных символов в маске
 		const pasteFreeSymbolNumber = TEL_PURE_LENGTH_LIMIT - valueNumbers.length;
 
-		// console.log("pasteSymbolNumber", pasteFreeSymbolNumber);
-
 		//получаем сумму свободных и выделенных слотов в маске
 		const freeSlots = pasteFreeSymbolNumber + pureSelectionLength;
-
-		// console.log(
-		// 	"freeSlots",
-		// 	freeSlots,
-		// 	pasteFreeSymbolNumber,
-		// 	pureSelectionLength
-		// );
 
 		// если вставляемая строка меньше, чем запас фри символов в маске, то игнор
 		if (freeSlots > pastedText.length) return;
@@ -165,18 +125,11 @@ export const telPaste = (e: any) => {
 		// вырезаем из буфера количество допустимых символов и вставляем в резалт
 		const pasteSymbols = pastedText.substring(0, freeSlots);
 
-		// console.log("firstPartNumbers", firstPartNumbers);
-		// console.log("pasteSymbols", pasteSymbols);
-		// console.log("secondPartNumbers", secondPartNumbers);
-
-		const result = firstPartNumbers + pasteSymbols + secondPartNumbers; //.substring(0, TEL_PURE_LENGTH_LIMIT);
-		// console.log("FINAL", result);
+		const result = firstPartNumbers + pasteSymbols + secondPartNumbers;
 		target.value = result;
 
 		//при достижении лимита сохраняем значения во внешние переменные
 		checkState(valueNumbers);
-		// console.log("LIMIT PASTE", LIMIT, STATE_VALUE);
-		// setCursorPosition(target, cursorStartPosition);
 		return;
 	}
 };
