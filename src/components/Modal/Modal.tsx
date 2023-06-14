@@ -1,23 +1,26 @@
+import { useRef, useEffect } from "react";
 import style from "./Modal.module.scss";
 import Button from "react-bootstrap/Button";
 
-export type methodsType = {
-	toMain: Function;
-	close: Function;
+type Props = {
+	type?: boolean;
+	onClose: Function;
+	btnContent?: string;
 };
 
-type Props = {
-	active?: boolean;
-	type?: boolean;
-	methods: methodsType;
-};
+const doNothing = () => {};
 
 export const Modal: React.FC<Props> = ({
-	active = false,
 	type = false,
-	methods: { toMain, close },
+	btnContent = "Закрыть",
+	onClose,
 }) => {
-	if (!active) return null;
+	const btnRef = useRef<any>();
+	const handleClose = () => onClose();
+
+	useEffect(() => {
+		btnRef.current.focus();
+	}, []);
 
 	const modalSuccess = (
 		<>
@@ -28,9 +31,10 @@ export const Modal: React.FC<Props> = ({
 				size="lg"
 				type="button"
 				id="button-to-main"
-				onClick={() => toMain()}
+				ref={btnRef}
+				onClick={handleClose}
 			>
-				На главную
+				{btnContent}
 			</Button>
 		</>
 	);
@@ -39,7 +43,7 @@ export const Modal: React.FC<Props> = ({
 		<>
 			<div className="w-100 d-flex justify-content-between align-items-center">
 				<h3 className={style.title}>Ошибка</h3>
-				<button className={style.circle_button} onClick={() => close()} />
+				<button className={style.circle_button} onClick={handleClose} />
 			</div>
 			<div className={style.circle_error} />
 			<Button
@@ -47,16 +51,21 @@ export const Modal: React.FC<Props> = ({
 				size="lg"
 				type="button"
 				id="button-close"
-				onClick={() => close()}
+				ref={btnRef}
+				onClick={handleClose}
 			>
-				Закрыть
+				{btnContent}
 			</Button>
 		</>
 	);
 
 	return (
-		<div className={style.background}>
-			<div className={style.popup}>{type ? modalSuccess : modalError}</div>
+		<div className={style.background} onClick={type ? doNothing : handleClose}>
+			<div className={style.popup} onClick={(e) => e.stopPropagation()}>
+				{type ? modalSuccess : modalError}
+			</div>
 		</div>
 	);
 };
+
+//

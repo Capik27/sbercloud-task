@@ -1,127 +1,126 @@
 import { useAdvChange } from "hooks/useAdvChange";
 import { useInputAction } from "hooks/useInputAction";
+import { useRadioChange } from "hooks/useRadioChange";
+import { useCheckboxChange } from "hooks/useCheckboxChange";
 import { useStep } from "hooks/useStep";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useSelector } from "react-redux";
 import { advType } from "store/formSlice";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { SyntheticEvent, useEffect } from "react";
+import step2Shema from "utils/yup/step2Shema";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+type ItemType = {
+	value: string | number | boolean;
+};
 
 export function Step2() {
 	const setStep = useStep();
-	const handleInputAct = useInputAction();
+	const setRadio = useRadioChange();
+	const setCheckbox = useCheckboxChange();
 	const setAdvChange = useAdvChange();
+	const handleInputAct = useInputAction();
 
-	const inputElems: advType[] = useSelector(
-		(state: any) => state.form.data.adv
+	const inputFields: advType[] = useSelector(
+		(state: any) => state.form.data.advantages
 	);
+	const checkboxFields: number[] = useSelector(
+		(state: any) => state.form.data.checkbox
+	);
+	const radioValue: number = useSelector((state: any) => state.form.data.radio);
 
-	const returnObjRadio = () => {
-		let radio: boolean | number | string = false;
-		const obj: any = {};
-		for (let index = 0; index < inputElems.length; index++) {
-			obj[index] = {
-				value: inputElems[index].value,
-				checked: inputElems[index].checked,
-			};
-			if (inputElems[index].radio) {
-				radio = String(index);
-			}
-		}
-		return { ...obj, radio };
+	const returnFormattedObj = () => {
+		const obj: any = { adv: [], checkbox: [], radio: String(radioValue) };
+		inputFields.forEach((value: advType) => {
+			obj.adv.push({ value });
+		});
+		checkboxFields.forEach((value: number) => {
+			obj.checkbox.push({ value });
+		});
+		return obj;
 	};
 
-	const defaultValues = returnObjRadio();
+	const defaultValues = returnFormattedObj();
 
 	const {
 		register,
 		handleSubmit,
 		getValues,
-		setValue,
-		formState: { errors, isValid },
+		control,
+		formState: { errors },
 	} = useForm({
 		mode: "onBlur",
+		resolver: yupResolver(step2Shema),
 		defaultValues,
 	});
 
-	const updStore = (data: any) => {
-		let radioIndex = data.radio;
-		for (let index = 0; index < data.length; index++) {
-			let item = data[index];
-			setAdvChange(index, "value", item.value);
-			setAdvChange(index, "checked", item.checked);
-			if (radioIndex === String(index)) {
-				setAdvChange(index, "radio", true);
-			} else {
-				setAdvChange(index, "radio", false);
-			}
-		}
-	};
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "adv",
+	});
 
-	const saveDataToStore = (int: number = 0) => {
-		const data = getValues();
-		data.length = inputElems.length + int;
-		// console.log("data", data);
-		updStore(data);
+	const updStore = () => {
+		const data: any = getValues();
+		setRadio(data.radio);
+		data.checkbox.forEach(({ value }: ItemType, index: number) =>
+			setCheckbox(index, +value)
+		);
+		data.adv.forEach(({ value }: ItemType, index: number) =>
+			setAdvChange(index, String(value))
+		);
 	};
 
 	const onSubmit = () => {
-		saveDataToStore();
+		updStore();
 		setStep(2);
 	};
 
 	const handleBack = (e: SyntheticEvent) => {
 		e.preventDefault();
-		saveDataToStore();
+		updStore();
 		setStep(0);
 	};
 
-	useEffect(() => {
-		setValue("radio", defaultValues.radio);
-		for (let index = 0; index < inputElems.length; index++) {
-			setValue(`${index}.value`, inputElems[index].value);
-			setValue(`${index}.checked`, inputElems[index].checked);
-		}
-	}, [inputElems]);
-
 	const handleAddAction = () => {
-		saveDataToStore();
+		const newInput: ItemType = { value: "" };
+		append(newInput);
 		handleInputAct("add");
 	};
 
 	const handleDeleteAction = (index: number) => {
-		if (defaultValues.radio == index) setValue("radio", false);
-		saveDataToStore(-1);
+		remove(index);
 		handleInputAct("delete", index);
 	};
 
-	// console.log("watch", watch());
-	// console.log("RENDER STEP 2");
+	const renderAdvError = (index: number) => {
+		let res: any = errors?.adv;
+		if (!res) return "";
+		res = res[`${index}`];
+		if (!res) return "";
+		res = res?.value;
+		if (!res) return "";
+		return res?.message ?? "";
+	};
 
 	return (
-		<Form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
+		<Form
+			className="mt-5 pt-4"
+			autoComplete="off"
+			onSubmit={handleSubmit(onSubmit)}
+		>
 			<Form.Group className="form-2">
 				<Form.Group className="mb-4">
 					<Form.Label className={"form__label"}>Advantages</Form.Label>
-					{inputElems.map((_: advType, index: number) => (
-						<Form.Group className="mb-4" key={index}>
-							<div className=" d-flex gap-2">
+					{fields.map((item: any, index: number) => (
+						<Form.Group className="mb-2" key={item.id}>
+							<div className=" d-flex gap-2 h-44">
 								<Form.Control
-									{...register(
-										`${index}.value`
-										// {
-										// 	required: "Поле не должно быть пустым",
-										// 	maxLength: {
-										// 		value: 30,
-										// 		message: "Максимально 30 символов!",
-										// 	},
-										// }
-									)}
-									autoComplete="off"
+									{...register(`adv.${index}.value`)}
 									type="input"
 									placeholder="..."
-									className={"form__field mb-1"}
+									className={"form__field"}
 									id={`field-advantages-${index + 1}`}
 								/>
 								<Button
@@ -129,8 +128,9 @@ export function Step2() {
 									variant="link"
 									id={`button-remove-${index + 1}`}
 									onClick={() => handleDeleteAction(index)}
-								></Button>
+								/>
 							</div>
+							<span className="tip">{renderAdvError(index)}</span>
 						</Form.Group>
 					))}
 					<Button
@@ -142,40 +142,36 @@ export function Step2() {
 					/>
 				</Form.Group>
 
-				{inputElems.length > 0 && (
-					<>
-						<Form.Group className="mb-4">
-							<Form.Label className={"form__label"}>Chechbox group</Form.Label>
-							{inputElems.map((_: advType, index: number) => (
-								<Form.Check
-									{...register(`${index}.checked`)}
-									type="checkbox"
-									label={index + 1}
-									key={index}
-									id={`field-checkbox-group-option-${index + 1}`}
-								/>
-							))}
-						</Form.Group>
+				<Form.Group className="mb-4">
+					<Form.Label className="mb-0">Checkbox group</Form.Label>
+					{checkboxFields.map((_: number, index: number) => (
+						<Form.Check
+							{...register(`checkbox.${index}.value`)}
+							className="form__box"
+							type="checkbox"
+							label={index + 1}
+							key={index}
+							id={`field-checkbox-group-option-${index + 1}`}
+						/>
+					))}
+				</Form.Group>
 
-						<Form.Group className="mb-4">
-							<Form.Label className={"form__label"}>Radio group</Form.Label>
-							{inputElems.map((_: advType, index: number) => (
-								<Form.Check
-									{...register("radio")}
-									type="radio"
-									label={index + 1}
-									value={index}
-									key={index}
-									id={`field-radio-group-option-${index + 1}`}
-								/>
-							))}
-						</Form.Group>
-					</>
-				)}
+				<Form.Group className="mb-4">
+					<Form.Label className="mb-0">Radio group</Form.Label>
+					{[0, 1, 2].map((_: number, index: number) => (
+						<Form.Check
+							{...register("radio")}
+							type="radio"
+							className="form__box"
+							label={index + 1}
+							value={index}
+							key={index}
+							id={`field-radio-group-option-${index + 1}`}
+						/>
+					))}
+				</Form.Group>
 			</Form.Group>
-			{/* <pre>{JSON.stringify(inputElems, null, 2)}</pre> */}
-
-			<Form.Group className={"d-flex justify-content-between pt-5 mt-5"}>
+			<Form.Group className={"d-flex justify-content-between pt-5"}>
 				<Button
 					className={"button-outlined"}
 					variant="outline-primary"

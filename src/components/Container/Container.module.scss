@@ -11,7 +11,11 @@
 
 .create {
     @extend %def;
-    padding: 60px calc((110px / $FORM_MAX_WIDTH) * 100%) 80px calc((110px / $FORM_MAX_WIDTH) * 100%);
+    padding: 60px 110px 80px 110px;
+
+    @media (max-width: 945px) {
+        padding: 60px calc((110px / $FORM_MAX_WIDTH) * 100%) 80px calc((110px / $FORM_MAX_WIDTH) * 100%);
+    }
 }
 
 .main {

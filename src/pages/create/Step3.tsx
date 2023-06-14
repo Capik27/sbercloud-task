@@ -6,11 +6,14 @@ import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { SyntheticEvent } from "react";
-import { Modal, methodsType } from "components/Modal/Modal";
+import { Modal } from "components/Modal/Modal";
 import { useNavigate } from "react-router-dom";
 import { MAIN_ROUTE } from "routes/paths";
 import { resetStore } from "store/formSlice";
 import { ENDPOINT } from "utils/links";
+import { yupResolver } from "@hookform/resolvers/yup";
+import step3Shema from "utils/yup/step3Shema";
+import { getClearTextValue } from "utils/validation/about";
 
 const MAX_LENGTH_AREA = 200;
 
@@ -21,10 +24,8 @@ export function Step3() {
 	const handleChange = useUserChange();
 	const infodata = useSelector((state: any) => state.form.data);
 	const about = useSelector((state: any) => state.form.data.user.about);
-	const [isModal, setIsModal] = useState(false);
-	const modalType = useRef(false);
-
-	const getSymbCount = (data: string) => data.split(" ").join("").length;
+	const [isModal, setIsModal] = useState<boolean>(false);
+	const modalType = useRef<boolean>(false);
 
 	const {
 		register,
@@ -33,26 +34,27 @@ export function Step3() {
 		watch,
 		formState: { errors, isValid },
 	} = useForm({
-		mode: "onBlur",
+		mode: "onChange",
+		resolver: yupResolver(step3Shema),
 		defaultValues: {
 			about,
 		},
 	});
 
 	watch("about");
-	const symbolsCounter = useRef(getSymbCount(about));
+	const symbolsCounter = useRef(getClearTextValue(about).length);
 
 	useEffect(() => {
 		const subscription = watch(
-			(data) => (symbolsCounter.current = getSymbCount(data.about))
+			(data) => (symbolsCounter.current = getClearTextValue(data?.about).length)
 		);
 		return () => subscription.unsubscribe();
 	}, [watch]);
 
 	const fetchForm = async () => {
 		const body = JSON.parse(JSON.stringify(infodata));
-		console.log("BODY", body);
-		body.user.about = getValues().about;
+		body.user.about = getClearTextValue(getValues().about);
+
 		const resp = await fetch(ENDPOINT, {
 			method: "POST",
 			headers: {
@@ -61,21 +63,13 @@ export function Step3() {
 			body: JSON.stringify(body),
 		});
 
-		// console.log("resp", resp);
-
 		if (resp.ok) modalType.current = true;
 		setIsModal(true);
 	};
 
-	const modalMethods: methodsType = {
-		toMain() {
-			// dispatch(resetStore());
-			setStep(0);
-			navigate(MAIN_ROUTE);
-		},
-		close() {
-			setIsModal(false);
-		},
+	const handleAutoEditing = (e: SyntheticEvent) => {
+		const target = e.target as HTMLTextAreaElement;
+		target.value = getClearTextValue(target.value);
 	};
 
 	const handleBack = (e: SyntheticEvent) => {
@@ -84,35 +78,39 @@ export function Step3() {
 		setStep(1);
 	};
 
-	const onSubmit = (data: any) => {
-		// console.log("data.about", data.about);
-		// handleChange("about", data.about);
+	const onSubmit = () => {
 		if (isValid) {
 			fetchForm();
 		}
 	};
 
-	// console.log("RENDER 3");
+	// MODAL CALLBACKS
+	function successCallback() {
+		dispatch(resetStore());
+		setStep(0);
+		navigate(MAIN_ROUTE);
+	}
+	function errorCallback() {
+		setIsModal(false);
+	}
 
 	return (
-		<Form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
+		<Form
+			className="mt-5 pt-4"
+			autoComplete="off"
+			onSubmit={handleSubmit(onSubmit)}
+		>
 			<Form.Group className="mb-4">
 				<Form.Label className={"form__label"}>About</Form.Label>
 				<div className="position-relative">
 					<Form.Control
-						{...register("about", {
-							required: "Введите информацию о себе",
-							maxLength: {
-								value: MAX_LENGTH_AREA,
-								message: "Слишком много символов!",
-							},
-						})}
-						autoComplete="off"
-						// maxLength={MAX_LENGTH_AREA}
-						style={{ height: "85px" }}
+						{...register("about")}
+						className={"form__textarea"}
 						id={"field-about"}
 						as="textarea"
 						placeholder="Some text..."
+						disabled={isModal}
+						onBlur={handleAutoEditing}
 					/>
 					{symbolsCounter.current > 0 && (
 						<div className="scounter">
@@ -125,24 +123,37 @@ export function Step3() {
 				</span>
 			</Form.Group>
 
-			<Form.Group className={"d-flex justify-content-between pt-5 mt-5"}>
+			<Form.Group className={"d-flex justify-content-between pt-5"}>
 				<Button
 					className={"button-outlined"}
 					variant="outline-primary"
 					size="lg"
 					type="button"
 					id="button-back"
+					disabled={isModal}
 					onClick={handleBack}
 				>
 					Назад
 				</Button>
 
-				<Button className={"button"} size="lg" type="submit" id="button-send">
+				<Button
+					disabled={isModal}
+					className={"button"}
+					size="lg"
+					type="submit"
+					id="button-send"
+				>
 					Отправить
 				</Button>
 			</Form.Group>
 
-			<Modal active={isModal} type={modalType.current} methods={modalMethods} />
+			{isModal && (
+				<Modal
+					type={modalType.current}
+					onClose={modalType.current ? successCallback : errorCallback}
+					btnContent={modalType.current ? "На главную" : "Закрыть"}
+				/>
+			)}
 		</Form>
 	);
 }

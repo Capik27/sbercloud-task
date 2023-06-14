@@ -2,9 +2,12 @@ import { useStep } from "hooks/useStep";
 import { useUserChange } from "hooks/useUserChange";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import { BootstrapInput } from "components/BootstrapInput";
 import { MAIN_ROUTE } from "routes/paths";
 import { useSelector } from "react-redux";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { SyntheticEvent } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -20,7 +23,8 @@ export function Step1() {
 		register,
 		handleSubmit,
 		getValues,
-		formState: { errors, isValid },
+		control,
+		formState: { errors },
 	} = useForm({
 		mode: "onBlur",
 		resolver: yupResolver(step1Shema),
@@ -41,7 +45,7 @@ export function Step1() {
 
 	const onSubmit = (data: any) => {
 		updStore(data);
-		if (isValid) setStep(1);
+		setStep(1);
 	};
 
 	const handleBack = (e: SyntheticEvent) => {
@@ -53,7 +57,7 @@ export function Step1() {
 	};
 
 	return (
-		<Form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
+		<Form className="mt-5 pt-4" onSubmit={handleSubmit(onSubmit)}>
 			<Form.Group className="form">
 				<Form.Group className="mb-4">
 					<Form.Label className={"form__label"}>Nickname</Form.Label>
@@ -79,13 +83,7 @@ export function Step1() {
 				<Form.Group className="mb-4">
 					<Form.Label className={"form__label"}>Name</Form.Label>
 					<Form.Control
-						{...register("name", {
-							required: "Введите ваше имя",
-							pattern: {
-								value: /^[a-zA-Zа-яА-Я]{1,50}$/,
-								message: "Не более 50 символов, только буквы!",
-							},
-						})}
+						{...register("name")}
 						autoComplete="off"
 						type="text"
 						placeholder="Имя"
@@ -100,13 +98,7 @@ export function Step1() {
 				<Form.Group className="mb-4">
 					<Form.Label className={"form__label"}>Sername</Form.Label>
 					<Form.Control
-						{...register("sername", {
-							required: "Введите вашу фамилию",
-							pattern: {
-								value: /^[a-zA-Zа-яА-Я]{1,50}$/,
-								message: "Не более 50 символов, только буквы!",
-							},
-						})}
+						{...register("sername")}
 						autoComplete="off"
 						type="sername"
 						placeholder="Фамилия"
@@ -118,29 +110,36 @@ export function Step1() {
 					</span>
 				</Form.Group>
 
-				<Form.Group>
+				<Form.Group className="mb-4">
 					<Form.Label className={"form__label"}>Sex</Form.Label>
-					<Form.Select
-						{...register("sex", {
-							required: "Выберите ваш пол",
-						})}
-						className={"form__field"}
-						aria-label="Sex"
-					>
-						<option value="man" id={"field-sex-option-man"}>
-							man
-						</option>
-						<option value="woman" id={"field-sex-option-woman"}>
-							woman
-						</option>
-					</Form.Select>
+					<Controller
+						name={"sex"}
+						control={control}
+						render={({ field }) => (
+							<Select
+								fullWidth
+								size="small"
+								{...field}
+								input={<BootstrapInput />}
+								id={"field-sex"}
+							>
+								<MenuItem value={"man"} id={"field-sex-option-man"}>
+									man
+								</MenuItem>
+								<MenuItem value={"woman"} id={"field-sex-option-woman"}>
+									woman
+								</MenuItem>
+							</Select>
+						)}
+					/>
+
 					<span className="tip">
 						{errors?.sex && String(errors?.sex?.message)}
 					</span>
 				</Form.Group>
 			</Form.Group>
 
-			<Form.Group className={"d-flex justify-content-between pt-5 mt-5"}>
+			<Form.Group className={"d-flex justify-content-between pt-5"}>
 				<Button
 					className={"button-outlined"}
 					variant="outline-primary"

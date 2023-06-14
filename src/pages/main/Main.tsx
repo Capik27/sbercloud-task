@@ -20,7 +20,7 @@ export function Main() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isValid },
+		formState: { errors },
 	} = useForm({
 		mode: "onBlur",
 		resolver: yupResolver(mainShema),
@@ -33,8 +33,7 @@ export function Main() {
 	const onSubmit = (data: any) => {
 		handleChange("phone", data.phone);
 		handleChange("email", data.email);
-
-		if (isValid) navigate(CREATE_ROUTE);
+		navigate(CREATE_ROUTE);
 	};
 
 	return (
@@ -77,7 +76,7 @@ export function Main() {
 				onSubmit={handleSubmit(onSubmit)}
 				autoComplete="off"
 			>
-				<Form.Group className="mb-3">
+				<Form.Group>
 					<Form.Label className={style.form__label}>Номер телефона</Form.Label>
 
 					<Form.Control
@@ -92,13 +91,12 @@ export function Main() {
 						{errors?.phone && String(errors?.phone?.message)}
 					</span>
 				</Form.Group>
-
-				<Form.Group className="mb-5">
+				<Form.Group>
 					<Form.Label className={style.form__label}>Email</Form.Label>
 					<Form.Control
 						{...register("email")}
 						type="text"
-						placeholder="starlord@gotg.com"
+						placeholder="example@example.com"
 						className={style.form__field}
 					/>
 					<span className="tip">
@@ -106,7 +104,12 @@ export function Main() {
 					</span>
 				</Form.Group>
 
-				<Button className={"button"} size="lg" type="submit" id="button-start">
+				<Button
+					className={"button mt-4"}
+					size="lg"
+					type="submit"
+					id="button-start"
+				>
 					Начать
 				</Button>
 			</Form>

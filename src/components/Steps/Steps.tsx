@@ -8,8 +8,9 @@ type Props = {
 };
 
 export const Steps: React.FC<Props> = ({ items, current, label }) => {
-	if (current > items)
+	if (current > items) {
 		return <span>{`Error: current ${current} > items ${items}`}</span>;
+	}
 
 	const last = current === items;
 	const list = new Array(items).fill(null);

@@ -1,6 +1,5 @@
 import { Container } from "components/Container/Container";
 import { Steps } from "components/Steps/Steps";
-
 import { Step1 } from "pages/create/Step1";
 import { Step2 } from "pages/create/Step2";
 import { Step3 } from "pages/create/Step3";

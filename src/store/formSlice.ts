@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export type advType = {
-	value?: string;
-	checked?: boolean;
-	radio?: boolean;
+	value: string;
 };
 
 type sliceType = {
@@ -23,11 +21,9 @@ const initialState: sliceType = {
 			phone: "",
 			about: "",
 		},
-		adv: [
-			{ value: "1", checked: false, radio: false },
-			{ value: "2", checked: false, radio: false },
-			{ value: "3", checked: false, radio: false },
-		],
+		advantages: ["", "", ""],
+		checkbox: [0, 0, 0],
+		radio: null,
 	},
 };
 
@@ -43,21 +39,25 @@ const formSlice = createSlice({
 		},
 		setUserField(state, action) {
 			const { key, value } = action.payload;
-			console.log("user change", key, value);
 			state.data.user[key] = value;
 		},
 		setAdvField(state, action) {
-			const { index, key, value } = action.payload;
-			// if (key === "radio") console.log("radio change state", action.payload);
-			state.data.adv[index][key] = value;
+			const { index, value } = action.payload;
+			state.data.advantages[index] = value;
+		},
+		setCheckboxField(state, action) {
+			const { index, value } = action.payload;
+			state.data.checkbox[index] = +value;
+		},
+		setRadioField(state, action) {
+			state.data.radio = action.payload;
 		},
 		addInput(state) {
-			state.data.adv.push({ value: "", checked: false, radio: false });
+			state.data.advantages.push("");
 		},
 		deleteInput(state, action) {
-			// console.log("delete index", action.payload);
-			state.data.adv = state.data.adv.filter(
-				(_: any, index: number) => index !== action.payload
+			state.data.advantages = state.data.advantages.filter(
+				(_: string, index: number) => index !== action.payload
 			);
 		},
 	},
@@ -69,6 +69,8 @@ export const {
 	addInput,
 	deleteInput,
 	setAdvField,
+	setCheckboxField,
+	setRadioField,
 	setUserField,
 	resetStore,
 } = formSlice.actions;

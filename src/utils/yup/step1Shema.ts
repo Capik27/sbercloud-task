@@ -13,7 +13,7 @@ const step1Shema = yup
 			.matches(nicknameRegExp, "Без спецсимволов!"),
 		name: yup
 			.string()
-			.required("Введите ваш псевдоним")
+			.required("Введите ваше имя")
 			.max(50, "Не более 50 символов!")
 			.matches(nameRegExp, "Допустимы только буквы!"),
 		sername: yup

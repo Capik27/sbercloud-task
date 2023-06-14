@@ -2,7 +2,7 @@ import { SyntheticEvent } from "react";
 const TEL_PURE_LENGTH_LIMIT = 11;
 // STATE
 let LIMIT: boolean = false; // тру если длина достигла лимита
-let STATE_VALUE: string = ""; // сохранение строкипри достижении лимита
+let STATE_VALUE: string = ""; // сохранение строки при достижении лимита
 let CLIPBOARD_VALUE: string = ""; // сохранение зачения из буфера
 
 /////////////////////////////////////////////////////////////////////////
