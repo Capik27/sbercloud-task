@@ -90,10 +90,9 @@
             content: "✖";
             display: flex;
             align-items: center;
-            text-align: center;
+            justify-content: center;
             width: 12px;
             height: 12px;
-            transform: translateY(1px);
             color: #b3b3b3;
             transition: all 0.3s;
         }
@@ -103,7 +102,7 @@
 
             &:before {
                 color: #a09f9f;
-                transform: rotate(90deg);
+                transform: rotate(90deg) translateY(-1px);
             }
         }
     }

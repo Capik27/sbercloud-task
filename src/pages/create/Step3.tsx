@@ -103,7 +103,6 @@ export function Step3() {
 				<div className="position-relative">
 					<Form.Control
 						{...register("about")}
-						className={"form__textarea"}
 						id={"field-about"}
 						as="textarea"
 						placeholder="Some text..."
@@ -149,6 +148,7 @@ export function Step3() {
 				<Modal
 					type={modalType.current}
 					onClose={modalType.current ? successCallback : errorCallback}
+					bgDisabled={modalType.current}
 					btnContent={modalType.current ? "На главную" : "Закрыть"}
 				/>
 			)}

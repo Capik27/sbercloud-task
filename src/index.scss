@@ -119,11 +119,6 @@ body {
     border: 1px solid #00000029;
   }
 
-  &__textarea {
-    height: 85px;
-    padding: 12px;
-  }
-
   &__box {
     margin: 0;
     height: 20px;
@@ -136,6 +131,11 @@ body {
       border-color: #00000029;
     }
   }
+}
+
+textarea.form-control {
+  min-height: 85px;
+  padding: 12px;
 }
 
 .h-44 {

@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 type Props = {
 	type?: boolean;
 	onClose: Function;
+	bgDisabled?: boolean;
 	btnContent?: string;
 };
 
@@ -12,8 +13,9 @@ const doNothing = () => {};
 
 export const Modal: React.FC<Props> = ({
 	type = false,
-	btnContent = "Закрыть",
 	onClose,
+	bgDisabled = true,
+	btnContent = "Закрыть",
 }) => {
 	const btnRef = useRef<any>();
 	const handleClose = () => onClose();
@@ -60,7 +62,10 @@ export const Modal: React.FC<Props> = ({
 	);
 
 	return (
-		<div className={style.background} onClick={type ? doNothing : handleClose}>
+		<div
+			className={style.background}
+			onClick={bgDisabled ? doNothing : handleClose}
+		>
 			<div className={style.popup} onClick={(e) => e.stopPropagation()}>
 				{type ? modalSuccess : modalError}
 			</div>
