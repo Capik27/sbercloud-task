@@ -20,7 +20,7 @@ export function Main() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isValid },
 	} = useForm({
 		mode: "onBlur",
 		resolver: yupResolver(mainShema),
@@ -33,7 +33,7 @@ export function Main() {
 	const onSubmit = (data: any) => {
 		handleChange("phone", data.phone);
 		handleChange("email", data.email);
-		navigate(CREATE_ROUTE);
+		isValid && navigate(CREATE_ROUTE);
 	};
 
 	return (

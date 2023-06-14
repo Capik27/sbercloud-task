@@ -79,9 +79,7 @@ export function Step3() {
 	};
 
 	const onSubmit = () => {
-		if (isValid) {
-			fetchForm();
-		}
+		isValid && fetchForm();
 	};
 
 	// MODAL CALLBACKS

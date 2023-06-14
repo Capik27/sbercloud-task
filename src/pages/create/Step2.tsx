@@ -49,7 +49,7 @@ export function Step2() {
 		handleSubmit,
 		getValues,
 		control,
-		formState: { errors },
+		formState: { errors, isValid },
 	} = useForm({
 		mode: "onBlur",
 		resolver: yupResolver(step2Shema),
@@ -74,7 +74,7 @@ export function Step2() {
 
 	const onSubmit = () => {
 		updStore();
-		setStep(2);
+		isValid && setStep(2);
 	};
 
 	const handleBack = (e: SyntheticEvent) => {
