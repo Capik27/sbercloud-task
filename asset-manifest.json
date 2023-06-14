@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/sbercloud-task/static/css/main.62a52dba.css",
-    "main.js": "/sbercloud-task/static/js/main.3a656aa8.js",
+    "main.js": "/sbercloud-task/static/js/main.76170e1c.js",
     "static/js/787.16055ba4.chunk.js": "/sbercloud-task/static/js/787.16055ba4.chunk.js",
     "static/media/SBSansInterface-Regular.woff2": "/sbercloud-task/static/media/SBSansInterface-Regular.b8dc05e02a26de192f04.woff2",
     "static/media/SBSansInterface-Semibold.woff2": "/sbercloud-task/static/media/SBSansInterface-Semibold.96014bf8703895b0656b.woff2",
     "index.html": "/sbercloud-task/index.html",
     "main.62a52dba.css.map": "/sbercloud-task/static/css/main.62a52dba.css.map",
-    "main.3a656aa8.js.map": "/sbercloud-task/static/js/main.3a656aa8.js.map",
+    "main.76170e1c.js.map": "/sbercloud-task/static/js/main.76170e1c.js.map",
     "787.16055ba4.chunk.js.map": "/sbercloud-task/static/js/787.16055ba4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.62a52dba.css",
-    "static/js/main.3a656aa8.js"
+    "static/js/main.76170e1c.js"
   ]
 }
