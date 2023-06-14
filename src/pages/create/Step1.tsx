@@ -53,7 +53,7 @@ export function Step1() {
 		const data = getValues();
 		updStore(data);
 
-		navigate(MAIN_ROUTE);
+		navigate(MAIN_ROUTE, { replace: true });
 	};
 
 	return (
