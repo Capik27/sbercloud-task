@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import mainShema from "utils/yup/mainShema";
-import { telChange, telPaste } from "utils/validation/phone";
+import { telChange, telPaste } from "utils/helpers/phone";
 
 export function Main() {
 	const navigate = useNavigate();

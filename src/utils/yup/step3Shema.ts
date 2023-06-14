@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { getClearTextValue } from "utils/validation/about";
+import { getClearTextValue } from "utils/helpers/about";
 
 const step3Shema = yup.object().shape({
 	about: yup

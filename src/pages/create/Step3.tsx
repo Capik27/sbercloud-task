@@ -13,7 +13,7 @@ import { resetStore } from "store/formSlice";
 import { ENDPOINT } from "utils/links";
 import { yupResolver } from "@hookform/resolvers/yup";
 import step3Shema from "utils/yup/step3Shema";
-import { getClearTextValue } from "utils/validation/about";
+import { getClearTextValue } from "utils/helpers/about";
 
 const MAX_LENGTH_AREA = 200;
 

@@ -9,7 +9,7 @@ export function Error() {
 
 	function goToMain() {
 		setStep(0);
-		navigate(MAIN_ROUTE);
+		navigate(MAIN_ROUTE, { replace: true });
 	}
 
 	return <Modal onClose={goToMain} btnContent={"Вернуться на главную"} />;
