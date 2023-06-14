@@ -86,7 +86,7 @@ export function Step3() {
 	function successCallback() {
 		dispatch(resetStore());
 		setStep(0);
-		navigate(MAIN_ROUTE);
+		navigate(MAIN_ROUTE, { replace: true });
 	}
 	function errorCallback() {
 		setIsModal(false);
