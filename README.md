@@ -1,7 +1,7 @@
 # Sbercloud task
 
-1) Repo: https://github.com/Capik27/sbercloud-task
-2) Gh-pages: https://capik27.github.io/sbercloud-task
+1. Repo: https://github.com/Capik27/sbercloud-task
+2. Gh-pages: https://capik27.github.io/sbercloud-task/#/
 
 - маска телефона делалась руками, т.к. поведение с др. либ не нравилось
 - делал на бутстрапе. под конец увидел, что селект нативный, поэтому пришлось впилить компонент из mui
