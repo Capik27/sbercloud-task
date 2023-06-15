@@ -8,7 +8,7 @@ import Form from "react-bootstrap/Form";
 import { useSelector } from "react-redux";
 import { advType } from "store/formSlice";
 import { useForm, useFieldArray } from "react-hook-form";
-import { SyntheticEvent, useEffect } from "react";
+import { SyntheticEvent } from "react";
 import step2Shema from "utils/yup/step2Shema";
 import { yupResolver } from "@hookform/resolvers/yup";
 

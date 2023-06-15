@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import mainShema from "utils/yup/mainShema";
-import { telChange, telPaste } from "utils/helpers/phone";
+import { telChange, telPaste, getMask } from "utils/helpers/phone";
 
 export function Main() {
 	const navigate = useNavigate();
@@ -25,13 +25,13 @@ export function Main() {
 		mode: "onBlur",
 		resolver: yupResolver(mainShema),
 		defaultValues: {
-			phone: user.phone ?? "",
+			phone: getMask(user.phone) ?? "",
 			email: user.email ?? "",
 		},
 	});
 
 	const onSubmit = (data: any) => {
-		handleChange("phone", data.phone);
+		handleChange("phone", data.phone.replace(/\D/g, ""));
 		handleChange("email", data.email);
 		isValid && navigate(CREATE_ROUTE);
 	};
@@ -77,13 +77,17 @@ export function Main() {
 				autoComplete="off"
 			>
 				<Form.Group>
-					<Form.Label className={style.form__label}>Номер телефона</Form.Label>
+					<Form.Label htmlFor={"field-phone"} className={style.form__label}>
+						Номер телефона
+					</Form.Label>
 
 					<Form.Control
 						{...register("phone")}
 						onPaste={telPaste}
 						onChange={telChange}
 						type="tel"
+						id={"field-phone"}
+						disabled={true}
 						placeholder="+7 (900) 000-00-00"
 						className={style.form__field}
 					/>
@@ -92,10 +96,14 @@ export function Main() {
 					</span>
 				</Form.Group>
 				<Form.Group>
-					<Form.Label className={style.form__label}>Email</Form.Label>
+					<Form.Label htmlFor={"field-email"} className={style.form__label}>
+						Email
+					</Form.Label>
 					<Form.Control
 						{...register("email")}
 						type="text"
+						id={"field-email"}
+						disabled={true}
 						placeholder="example@example.com"
 						className={style.form__field}
 					/>

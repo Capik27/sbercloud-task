@@ -99,7 +99,9 @@ export function Step3() {
 			onSubmit={handleSubmit(onSubmit)}
 		>
 			<Form.Group className="mb-4">
-				<Form.Label className={"form__label"}>About</Form.Label>
+				<Form.Label htmlFor={"field-about"} className={"form__label"}>
+					About
+				</Form.Label>
 				<div className="position-relative">
 					<Form.Control
 						{...register("about")}

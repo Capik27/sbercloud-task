@@ -57,19 +57,18 @@ export function Step1() {
 	};
 
 	return (
-		<Form className="mt-5 pt-4" onSubmit={handleSubmit(onSubmit)}>
+		<Form
+			className="mt-5 pt-4"
+			onSubmit={handleSubmit(onSubmit)}
+			autoComplete="off"
+		>
 			<Form.Group className="form">
 				<Form.Group className="mb-4">
-					<Form.Label className={"form__label"}>Nickname</Form.Label>
+					<Form.Label htmlFor={"field-nickname"} className={"form__label"}>
+						Nickname
+					</Form.Label>
 					<Form.Control
-						{...register("nickname", {
-							required: "Введите ваш псевдоним",
-							pattern: {
-								value: /^[a-zA-Zа-яА-Я0-9]{1,30}$/,
-								message: "Не более 30 символов, без спецсимволов!",
-							},
-						})}
-						autoComplete="off"
+						{...register("nickname")}
 						type="text"
 						placeholder="Псевдоним"
 						className={"form__field"}
@@ -81,10 +80,11 @@ export function Step1() {
 				</Form.Group>
 
 				<Form.Group className="mb-4">
-					<Form.Label className={"form__label"}>Name</Form.Label>
+					<Form.Label htmlFor={"field-name"} className={"form__label"}>
+						Name
+					</Form.Label>
 					<Form.Control
 						{...register("name")}
-						autoComplete="off"
 						type="text"
 						placeholder="Имя"
 						className={"form__field"}
@@ -96,10 +96,11 @@ export function Step1() {
 				</Form.Group>
 
 				<Form.Group className="mb-4">
-					<Form.Label className={"form__label"}>Sername</Form.Label>
+					<Form.Label htmlFor={"field-sername"} className={"form__label"}>
+						Sername
+					</Form.Label>
 					<Form.Control
 						{...register("sername")}
-						autoComplete="off"
 						type="sername"
 						placeholder="Фамилия"
 						className={"form__field"}
@@ -111,7 +112,9 @@ export function Step1() {
 				</Form.Group>
 
 				<Form.Group className="mb-4">
-					<Form.Label className={"form__label"}>Sex</Form.Label>
+					<Form.Label htmlFor={"field-sex"} className={"form__label"}>
+						Sex
+					</Form.Label>
 					<Controller
 						name={"sex"}
 						control={control}

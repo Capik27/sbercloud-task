@@ -135,11 +135,20 @@ export const telPaste = (e: any) => {
 };
 
 /**
- * Функция создания маски
+ * Функция навешивания маски на инпут
  *  @element : target элемент инпута
  *  @strNumbers : строка с числами
  */
 function convertValueToMask(element: HTMLInputElement, strNumbers: string) {
+	element.value = getMask(strNumbers);
+}
+
+/**
+ * Функция создания маски
+ *  @strNumbers : строка с числами
+ * 	@return foramtted string
+ */
+export function getMask(strNumbers: string) {
 	let formattedValue = "";
 	if (["7", "8", "9"].indexOf(strNumbers[0]) > -1) {
 		//добавляем код страны
@@ -169,7 +178,7 @@ function convertValueToMask(element: HTMLInputElement, strNumbers: string) {
 		//не для РФ
 		formattedValue = strNumbers;
 	}
-	element.value = "+" + formattedValue;
+	return "+" + formattedValue;
 }
 
 /**

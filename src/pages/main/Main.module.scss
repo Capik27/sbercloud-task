@@ -101,10 +101,11 @@
         border-radius: 4px;
         color: $FORM_COLOR_LABEL;
         border: 1px solid #00000029;
-        background-color: $COLOR_PAGE_BG;
 
-        &:focus {
-            background-color: $COLOR_PAGE_BG;
-        }
+        // background-color: $COLOR_PAGE_BG;
+
+        // &:focus {
+        //     background-color: $COLOR_PAGE_BG;
+        // }
     }
 }
