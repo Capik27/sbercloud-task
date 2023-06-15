@@ -12,5 +12,5 @@ export function Error() {
 		navigate(MAIN_ROUTE, { replace: true });
 	}
 
-	return <Modal onClose={goToMain} btnContent={"Вернуться на главную"} />;
+	return <Modal show onClose={goToMain} btnContent={"Вернуться на главную"} />;
 }

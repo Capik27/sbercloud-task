@@ -1,17 +1,19 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import style from "./Modal.module.scss";
 import Button from "react-bootstrap/Button";
 
 type Props = {
-	type?: boolean;
-	onClose: Function;
-	bgDisabled?: boolean;
+	show?: boolean; // show/hide modal
+	type?: boolean; // success/error
+	onClose: Function; // callback
+	bgDisabled?: boolean; // if false - click on BG will activate closeCallback
 	btnContent?: string;
 };
 
 const doNothing = () => {};
 
 export const Modal: React.FC<Props> = ({
+	show = false,
 	type = false,
 	onClose,
 	bgDisabled = true,
@@ -21,8 +23,10 @@ export const Modal: React.FC<Props> = ({
 	const handleClose = () => onClose();
 
 	useEffect(() => {
-		btnRef.current.focus();
-	}, []);
+		if (show) btnRef.current.focus();
+	}, [show]);
+
+	if (!show) return null;
 
 	const modalSuccess = (
 		<>

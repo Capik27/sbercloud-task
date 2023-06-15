@@ -146,14 +146,13 @@ export function Step3() {
 				</Button>
 			</Form.Group>
 
-			{isModal && (
-				<Modal
-					type={modalType.current}
-					onClose={modalType.current ? successCallback : errorCallback}
-					bgDisabled={modalType.current}
-					btnContent={modalType.current ? "На главную" : "Закрыть"}
-				/>
-			)}
+			<Modal
+				show={isModal}
+				type={modalType.current}
+				onClose={modalType.current ? successCallback : errorCallback}
+				bgDisabled={modalType.current}
+				btnContent={modalType.current ? "На главную" : "Закрыть"}
+			/>
 		</Form>
 	);
 }

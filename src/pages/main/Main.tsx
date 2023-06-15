@@ -25,8 +25,8 @@ export function Main() {
 		mode: "onBlur",
 		resolver: yupResolver(mainShema),
 		defaultValues: {
-			phone: getMask(user.phone) ?? "",
-			email: user.email ?? "",
+			phone: getMask(user.phone || "89226606542"),
+			email: user.email || "ShikhovKS@gmail.com",
 		},
 	});
 
