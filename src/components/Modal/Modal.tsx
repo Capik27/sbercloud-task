@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import style from "./Modal.module.scss";
 import Button from "react-bootstrap/Button";
 
