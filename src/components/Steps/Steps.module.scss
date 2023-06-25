@@ -50,6 +50,7 @@
     @extend %line;
     z-index: 2;
     background-color: $COLOR_STEPS_ITEM_DONE;
+    transition: all 0.75s;
 }
 
 %item {
@@ -68,17 +69,7 @@
 
     &_done {
         @extend %item;
-        border: 1px solid $COLOR_STEPS_ITEM_DONE;
-        background-color: $COLOR_STEPS_ITEM_DONE;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-
-        &:before {
-            content: url("../../assets/checked_icon.png");
-            position: absolute;
-        }
+        background-image: url("../../assets/checked.svg");
     }
 
     &_empty {
